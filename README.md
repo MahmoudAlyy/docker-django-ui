@@ -1,11 +1,12 @@
-# django-xtermjs
+# docker-django-ui
+A simple web UI for managing docker containers and images using django, socket.io and xterm.js
 
+You can start, stop or remove containers
+![Imgur](https://i.imgur.com/JTNcEyC.png)
+
+or console into them using a fully functional terminal
 ![screenshot](https://github.com/MahmoudAlyy/django-xtermjs/blob/main/django-xtermjs.gif)
 
-# Credit
-This repository is a copy of [cs01/pyxterms](https://github.com/cs01/pyxtermjs) but using django and python-socketio instead of flask and flask-socketio to create a fully functional terminal in the browser. 
-
-This is a starting point to build your own web app with a terminal.
 
 # Installation
 Clone the repository and cd into it, then run:
