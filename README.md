@@ -5,7 +5,7 @@ You can start, stop or remove containers
 ![Imgur](https://i.imgur.com/JTNcEyC.png)
 
 or console into them using a fully functional terminal
-![screenshot](https://github.com/MahmoudAlyy/django-xtermjs/blob/main/django-xtermjs.gif)
+![screenshot](https://github.com/MahmoudAlyy/docker-django-ui/blob/main/docker-django-ui.gif)
 
 
 # Installation
