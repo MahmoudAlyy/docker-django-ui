@@ -1,0 +1,93 @@
+ <head>
+</head> 
+
+
+<h3>Containers</h3>
+
+{% for item in containers %}
+{{item.attrs.Name|slice:"1:"}}
+	<h4> <a href="/console/{{item.id}}">{{item.attrs.Config.Image}}</a> - {{item.attrs.Config.Cmd}} - {{item.status}} - {{item.short_id}} 
+	<button id={{item.id}} onclick="start_stop(this.id,this.innerHTML.replace(/\s/g, ''))">
+	{% if item.status == "running" %}
+	stop
+	{% else %}
+	start
+	{% endif %}
+	</button> <button onclick=" window.open(window.location.href+'console/{{item.id}}') " >Console</button> </h4>
+
+
+
+
+{% endfor %}
+
+<h3>Images</h3>
+
+{% for item in images %}
+{% widthratio item.attrs.Size 1048576 1 %}
+  
+   <button id = {{item.attrs.RepoTags.0}} onclick="launchContainer(this.id) "> Launch {{item.tags.0 }} </button> 
+  	<br>
+{% endfor %}
+
+
+<script type="text/javascript">
+	function launchContainer(name){
+		
+		let data = {'name': name};
+		let url = window.location.href + 'create/'
+		let csrftoken = '{{csrf_token}}'
+        
+        fetch(url, {
+		  method: "POST", 
+		  body: JSON.stringify(data),
+		  dataType: 'json',
+		  headers: { "X-CSRFToken": csrftoken },
+
+		}).then(res => {
+			// i can make multiple endpoints so that i can make a fetch to get new containers instead of reloading
+			// add loading thingy
+			//TODO
+			location.reload(); 		  
+		}).catch(err => {
+            alert("Encountered an error when creating container")
+        });
+	}
+
+
+	function start_stop(id,cmd){
+		console.log(id,cmd,id)
+		let url = window.location.href + 'start_stop/'
+		let data = {'id' : id , 'cmd' : cmd};
+		let csrftoken = '{{csrf_token}}'
+
+	 	fetch(url, {
+		  method: "POST", 
+		  body: JSON.stringify(data),
+		  dataType: 'json',
+		  headers: { "X-CSRFToken": csrftoken },
+
+		}).then(res => {
+			location.reload(); 		  
+		}).catch(err => {
+            alert("Encountered an error when starting/stoping container")
+        });
+
+
+	}
+
+</script>
+<h4>{{ info.Containers }} </h4>
+<h4>{{ info.ContainersRunning }} </h4>
+<h4>{{ info.ContainersPaused }} </h4>
+<h4>{{ info.ContainersStopped }} </h4>
+<h4>{{ info.Images }} </h4>
+<h4>{{ info.SystemTime }} </h4>
+<h4>{{ info.KernelVersion }} </h4>
+<h4>{{ info.OperatingSystem }} </h4>
+<h4>{{ info.Architecture }} </h4>
+<h4>{{ info.IndexServerAddress }} </h4>
+<h4>{{ info.ServerVersion }} </h4>
+
+
+
+
