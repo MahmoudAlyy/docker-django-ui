@@ -178,7 +178,6 @@
         }).then(data => {
           html_object.innerHTML = "Remove"
           let err = data["err"].split("(")[1].substring(1) +data["err"].split("(")[2].substring(12).slice(0, -2)
-          //console.log(err)
           alert(err)
         });
 }
