@@ -35,7 +35,8 @@ def browse(request):
     page = requests.get(url,headers=headers)
     summary = page.json()['summaries']
 
-    return render(request, 'browse.html', {'summary': summary, 'page_number':page_number,'q':q})
+
+    return render(request, 'browse.html', {'summary': summary,'q':q})
 
 def create(request):
 	if request.method == 'POST':
@@ -151,16 +152,28 @@ def start_console(sid,message):
 @sio.event
 def pull_image_input(sid,message):
 	client = docker.APIClient()
-	x = client.pull(message["image"], stream=True,decode=True)
+	try:
+		x = client.pull(message["image"], stream=True,decode=True,tag=message["version"])
+	except docker.errors.APIError as err:
+		print("aaaa",type(err),str(err))
+		sio.emit("pull_image_output", {"status": str(err), "progress": ""},room=sid)
+
+		#uesless sleep, i just want the user to read the error message before redirection happens
+		sio.sleep(3)
+		sio.disconnect(sid)
+		return
 
 	for item in x:
 		print("AAA",item)
 		if "progress" not in item:
 			item["progress"] = ""
+		if "errorDetail" in item:
+			item["status"] = item["errorDetail"]["message"]
 
 		sio.emit("pull_image_output", {"status": item["status"], "progress": item["progress"]},room=sid)
 		sio.sleep(0)
 
+	sio.sleep(1.5)
 	sio.disconnect(sid)
 
 

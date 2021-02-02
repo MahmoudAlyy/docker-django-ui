@@ -119,6 +119,7 @@ body {
 padding: vertical horizontal;
   border: 1px dotted black;
   background-color: red;
+  padding-top: 1px;
 
 }
 
@@ -172,7 +173,7 @@ padding: vertical horizontal;
 .modal-content {
   background-color: #fefefe;
 
-  margin-top: 5%;
+  margin-top: 2%;
   margin-right: auto;
   margin-bottom: 15%;
   margin-left: auto;

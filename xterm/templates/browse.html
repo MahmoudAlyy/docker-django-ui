@@ -1,227 +1,179 @@
 <!doctype html>
-<html lang="en">  
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-   
-    <title>Docker</title>
-
-    
-
-    <!-- Bootstrap core CSS -->
-    <link href="../static/assets/css/bootstrap.min.css" rel="stylesheet">
-
-    <link rel="stylesheet" href="https://unpkg.com/xterm@3.6.0/dist/xterm.css" />
-        
-    <!-- Custom styles for this template -->
-    <link href="../static/assets/css/cover.css" rel="stylesheet">
-     <!-- Bootstrap core CSS -->
-    <link href="../static/assets/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
-    <link href="../static/assets/css/dashboard.css" rel="stylesheet">
-
-
-    <script src="https://unpkg.com/xterm@3.6.0/dist/xterm.js"></script>
-
-    <script src="https://unpkg.com/xterm@3.6.0/dist/addons/fit/fit.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
-
-
-  </head>
-  <body class="text-center">
-    <div class="cover-container d-flex w-100 p-3 mx-auto flex-column">
-
-  
-
- <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Docker on Demand V2</a>   
-        <form id="tfnewsearch" method="get" style="margin-right:auto; margin-left: auto;">
-          <div style="margin-right: 300px">
-            <input id ="my_text" type="text" class="tftextinput" name="q" size="60" maxlength="120" >
-            <input style="margin-left: 10px" type="submit" value="Search Images" class="tfbutton">
-            </div>
-    </form>     
-    </nav>
-
-  
-
-<p><br></p>
-
-
-<p><br></p>
-
-
-
-{% for item in summary %}
-
-  {% if item.certification_status != "certified" %}    
-  <div class=".myDiv">
-
-    <img src ="https://d1q6f0aelx0por.cloudfront.net/product-logos/library-{{item.name}}-logo.png?"  onerror="this.onerror=null; this.src='../static/assets/img/docker_img.png'" alt="" width="80" height="80" style="float:left">
-
-
-        <h4 >{{ item.name }} </h4>
-
-    <p>{{ item.short_description }}</p>
-
-
-  
-      <button class="btn btn-lg btn-secondary" onclick="display_div(this.id)" style="float: right; font-size: 15px;" id="{{item.name}}">Pull {{item.name}}</button>
-
-
-  </div>
-
-
-  {% endif %}
-
-{% endfor %}
-
-
-<nav aria-label="Page navigation example" style="padding-top: 30px">
-  <ul class="pagination justify-content-center">
-    <li class="page-item"><a class="page-link" href="?page=1&q={{q}}" style="font-size: 12px;">1</a></li>
-    <li class="page-item"><a class="page-link" href="?page=2&q={{q}}" style="font-size: 12px;">2</a></li>
-    <li class="page-item"><a class="page-link" href="?page=3&q={{q}}" style="font-size: 12px;">3</a></li>
-    <li class="page-item"><a class="page-link" href="?page=4&q={{q}}" style="font-size: 12px;">4</a></li>
-    <li class="page-item"><a class="page-link" href="?page=5&q={{q}}" style="font-size: 12px;">5</a></li>
-    <li class="page-item"><a class="page-link" href="?page=6&q={{q}}" style="font-size: 12px;">6</a></li>
-    <li class="page-item"><a class="page-link" href="?page=7&q={{q}}" style="font-size: 12px;">7</a></li>
-    <li class="page-item"><a class="page-link" href="?page=8&q={{q}}" style="font-size: 12px;">8</a></li>
-    <li class="page-item"><a class="page-link" href="?page=9&q={{q}}" style="font-size: 12px;">9</a></li>
-    <li class="page-item"><a class="page-link" href="?page=10&q={{q}}" style="font-size: 12px;">10</a></li>
-
-  </ul>
-</nav>
-
-
-<!-- The Modal -->
-<div id="myModal1" class="modal">
-
-  <div class="modal-content" style="width: 50%">
-    <span onclick="hide_div()"class="close">&times;</span>
-
-    <div style="display: inline-block;">
-
-      <div style="float: left; padding-left: 40px">
-        <label for="imageName">Image name: </label>
-        <input id="modal_input" type="text"  readonly/>
-      </div>
-
-      <div style="float: right; padding-right: 40px">
-        <label>Version: </label>
-        <input type="text" placeholder="latest" />
-      </div>
-
-    </div>
-
-   <button  id="myBtn2" onclick= "pull_image()" class="btn btn-lg btn-secondary" style="float: right; font-size: 15px;">Pull</button>
-
-    <div style=" width: 100%; height:100%; " id="terminal"></div>
-
-
-  </div>
-</div>
-
-
-
-
-
-<script type="text/javascript">
-
-
-
-var modal1 = document.getElementById("myModal1");
-var modal2 = document.getElementById("terminal");
-
-var btn1 = document.getElementById("myBtn1");
-
-
- 
-function display_div(name){
-  modal1.style.display = "block";
-  document.getElementById("myBtn2").innerHTML="Pull "+name
-  document.getElementById("modal_input").placeholder = name
-}
-
-function hide_div(){
-  modal1.style.display = "none";
-}
-
-
-window.onclick = function(event) {
-  if (event.target == modal1) {
-    modal1.style.display = "none";
-  }
-} 
-
-
-function pull_image() {
-
-  let image = document.getElementById("modal_input").placeholder
-  modal2.style.display = "block";
-  Terminal.applyAddon(fit)
-  var socket = io.connect()
-
-  var term = new Terminal({
-    cursorBlink: true,
-  });
-
-  term.open(document.getElementById('terminal'));
-
-  term.fit()
-  term.focus()
-
-  socket.on("connect", () => {
-  })
-
-  socket.emit("pull_image_input", {"image": image})
-
-
-  socket.on("pull_image_output", (message) => {
-    console.log(message["status"],"aaa",message["progress"])
-    term.write(message["status"]+message["progress"]+"\r\n")
-  });
-
-
-  socket.on("disconnect", () => {
-    console.log("DONE")
-    console.log(window.location.hostname)
-    window.location.href = "/"
-  })
-
-  }
-
-
-</script>
-       
-
-
-  
-
-
-
-    
-   
-
-
-
-
-
-
-
-
-
-
-
-
-<footer class="mastfoot mt-auto">
-    <div class="inner">
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
       
-    </div>
-  </footer>
- 
-</div>
-</body>
+      <title>Browse Images</title>
+      
+      <link href="../static/assets/css/cover.css" rel="stylesheet">
+      <link href="../static/assets/css/bootstrap.min.css" rel="stylesheet">
+      <link href="../static/assets/css/dashboard.css" rel="stylesheet">
+      
+      <link rel="stylesheet" href="https://unpkg.com/xterm@3.6.0/dist/xterm.css" />
+      
+      <script src="https://unpkg.com/xterm@3.6.0/dist/xterm.js"></script>
+      <script src="https://unpkg.com/xterm@3.6.0/dist/addons/fit/fit.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
+   
+   </head>
+   
+   <body class="text-center">
+      <div class="cover-container d-flex w-100 p-3 mx-auto flex-column" style="margin-top: 80px">
+   
+         <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Docker on Demand V2</a>   
+            <form id="tfnewsearch" method="get" style="margin-right:auto; margin-left: auto;">
+               <div style="margin-right: 300px">
+                  <input id ="my_text" type="text" class="tftextinput" name="q" size="60" maxlength="120" value="{{q}}" >
+                  <input style="margin-left: 10px" type="submit" value="Search Images" class="tfbutton">
+               </div>
+            </form>
+         </nav>
+   
+         {% for item in summary %}
+           {% if item.certification_status != "certified" %}    
+           <div class=".myDiv">
+              <img src ="https://d1q6f0aelx0por.cloudfront.net/product-logos/library-{{item.name}}-logo.png?"  onerror="this.onerror=null; this.src='../static/assets/img/docker_img.png'" alt="" width="80" height="80" style="float:left">
+              <h4 >{{ item.name }} </h4>
+              <p>{{ item.short_description }}</p>
+              <button class="btn btn-lg btn-secondary" onclick="display_div(this.id)" style="float: right; font-size: 15px;" id="{{item.name}}">Pull {{item.name}}</button>
+           </div>
+           {% endif %}
+         {% endfor %}
+
+         <nav aria-label="Page navigation example" style="padding-top: 30px">
+            <ul class="pagination justify-content-center">
+               <li class="page-item"><a class="page-link" href="?page=1&q={{q}}" style="font-size: 12px;">1</a></li>
+               <li class="page-item"><a class="page-link" href="?page=2&q={{q}}" style="font-size: 12px;">2</a></li>
+               <li class="page-item"><a class="page-link" href="?page=3&q={{q}}" style="font-size: 12px;">3</a></li>
+               <li class="page-item"><a class="page-link" href="?page=4&q={{q}}" style="font-size: 12px;">4</a></li>
+               <li class="page-item"><a class="page-link" href="?page=5&q={{q}}" style="font-size: 12px;">5</a></li>
+               <li class="page-item"><a class="page-link" href="?page=6&q={{q}}" style="font-size: 12px;">6</a></li>
+               <li class="page-item"><a class="page-link" href="?page=7&q={{q}}" style="font-size: 12px;">7</a></li>
+               <li class="page-item"><a class="page-link" href="?page=8&q={{q}}" style="font-size: 12px;">8</a></li>
+               <li class="page-item"><a class="page-link" href="?page=9&q={{q}}" style="font-size: 12px;">9</a></li>
+               <li class="page-item"><a class="page-link" href="?page=10&q={{q}}" style="font-size: 12px;">10</a></li>
+            </ul>
+         </nav>
+
+         <!-- The Modal -->
+         <div id="myModal1" class="modal">
+            <div class="modal-content" style="width: 50%">
+               <!-- <span onclick="hide_div()"class="close">&times;</span> -->
+               <div style="display: inline-block;">
+
+                  <div style="float: left; padding-left: 40px">
+                     <label for="imageName">Image name: </label>
+                     <input id="modal_input" type="text"  readonly/>
+                  </div>
+                  <div style="float: right; padding-right: 40px">
+                     <label>Version: </label>
+                     <input id="modal_input_version" type="text" placeholder="latest" />
+                  </div>
+
+               </div>
+               <button  id="myBtn2" onclick= "pull_image()" class="btn btn-lg btn-secondary" style="float: right; font-size: 15px;">Pull</button>
+
+               <div style=" width: 100%; height:100%; display:none" id="terminal" ></div>
+
+                <div id="modal3" style="display: none; ">
+
+                  <input style="float: left; margin-left: 10%;margin-top: 2%;" onclick="hide_all();" type="submit" value="Search More Images">
+                  <input style="float: right; margin-right: 10%;margin-top: 2%;" onclick="window.location.href = '/'" type="submit" value="Go To Dashboard">
+
+                </div>
+
+                  
+            </div>
+         </div>
+
+         <script type="text/javascript">
+            var modal1 = document.getElementById("myModal1");
+            var modal2 = document.getElementById("terminal");
+            var modal3 = document.getElementById("modal3")
+            
+            var btn1 = document.getElementById("myBtn1");
+
+            var flag = 0;
+            Terminal.applyAddon(fit)
+            var term = new Terminal({
+              cursorBlink: true,
+            });
+       
+            function display_div(name){
+              modal1.style.display = "block";
+              document.getElementById("myBtn2").innerHTML="Pull "+name
+              document.getElementById("modal_input").placeholder = name
+            }
+            
+            function hide_all(){
+               modal1.style.display = "none";
+                modal2.style.display = "none";
+                modal3.style.display = "none"
+
+            }
+            window.onclick = function(event) {
+              if (event.target == modal1) {
+                hide_all();
+                }
+              } 
+
+
+          
+
+            window.onresize = term.fit()
+   
+            function pull_image() {
+
+              // clear terminal
+              term.write('\x1b[H\x1b[2J')
+
+              let image = document.getElementById("modal_input").placeholder;
+              let version = document.getElementById("modal_input_version").value;
+
+              if (version === ""){
+                version = "latest";
+              }
+               
+              modal2.style.display = "block";
+
+              // open terminal only once
+              if (flag==0){
+              term.open(document.getElementById('terminal'));
+              term.fit()
+              flag+=1;
+              }
+
+              var socket = io.connect()
+            
+              socket.on("connect", () => {
+                term.write("Pulling image, please wait...\r\n")
+              })
+            
+              socket.emit("pull_image_input", {"image": image,"version":version})
+            
+              socket.on("pull_image_output", (message) => {
+                console.log(message["status"],"aaa",message["progress"])
+                term.write(message["status"]+message["progress"]+"\r\n")
+              });
+            
+              socket.on("disconnect", () => {
+                console.log("DONE")
+                term.write("\r\nDone")
+                modal3.style.display = "inline-block";
+
+              })
+            
+              }
+            
+            
+         </script>
+         <footer class="mastfoot mt-auto">
+            <div class="inner">
+            </div>
+         </footer>
+      </div>
+   </body>
 </html>
+
