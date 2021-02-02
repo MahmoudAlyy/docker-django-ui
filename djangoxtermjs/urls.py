@@ -27,6 +27,8 @@ urlpatterns = [
     path('start_stop_remove/', xterms_views.start_stop_remove, name='start_stop_remove'),
     path('remove_image/', xterms_views.remove_image, name='remove_image'),
     path('create/', xterms_views.create, name='create'),
+    path('browse/', xterms_views.browse, name='browse'),
+
 
 
 

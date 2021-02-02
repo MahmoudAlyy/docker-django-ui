@@ -12,6 +12,7 @@ import signal
 import eventlet
 import docker
 import time
+import requests
 
 import json
 from .models import *
@@ -22,6 +23,19 @@ sio = socketio.Server(async_mode=async_mode)
 def index(request):
 		client = docker.from_env()
 		return render(request, 'index.html',{'containers':client.containers.list(all=True),'images':client.images.list(),'info':client.info()})
+
+
+def browse(request):
+    page_number = request.GET.get('page','1')
+    q = request.GET.get('q','')
+
+    url = 'https://hub.docker.com/api/content/v1/products/search?page='+page_number+'&page_size=15&q='+q+'&type=image'
+    headers = {'Search-Version': 'v3'}
+
+    page = requests.get(url,headers=headers)
+    summary = page.json()['summaries']
+
+    return render(request, 'browse.html', {'summary': summary, 'page_number':page_number,'q':q})
 
 def create(request):
 	if request.method == 'POST':
@@ -56,10 +70,6 @@ def remove_image(request):
 			response.status_code = 409
 			
 			return response 
-			#return HttpResponse(status=400, {'test':'plx'})
-			#return HttpResponse(x, status=400)
-			#return HttpResponseNotFound('<h1>Page not found</h1>')
-			#print(docker.errors.APIError)
 
 
 def start_stop_remove(request):
@@ -107,11 +117,9 @@ def read_and_forward_output(sid):
 @sio.event
 def resize(sid, message): 
 	client = docker.APIClient()
-	#try:
 	id = sio.get_session(sid)['id']
 	client.resize(container=id, height=int(message["rows"]), width=int(message["cols"]))
-	#except KeyError:
-	#	print("session id has not been saved yet")	
+
 
 @sio.event
 def pty_input(sid, message):
@@ -138,6 +146,22 @@ def start_console(sid,message):
 	sio.save_session(sid, {'socket': socket,"id":message["Id"]})
 
 	sio.start_background_task(target=read_and_forward_output(sid))
+
+
+@sio.event
+def pull_image_input(sid,message):
+	client = docker.APIClient()
+	x = client.pull(message["image"], stream=True,decode=True)
+
+	for item in x:
+		print("AAA",item)
+		if "progress" not in item:
+			item["progress"] = ""
+
+		sio.emit("pull_image_output", {"status": item["status"], "progress": item["progress"]},room=sid)
+		sio.sleep(0)
+
+	sio.disconnect(sid)
 
 
 @sio.event

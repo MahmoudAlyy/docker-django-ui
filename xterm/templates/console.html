@@ -36,7 +36,6 @@
 
         term.on('key', (key, ev) => {
             socket.emit("pty_input", {"input": key,"id":window.location.pathname.split("/")[2]})
-            //console.log("pressed key", key)
 
         });
 

@@ -20,10 +20,27 @@
     
 
  <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Docker on Demand V2</a>        
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Docker on Demand V2</a> 
+
+     <form id="tfnewsearch" action="/browse" method="get" style="margin-right:auto; margin-left: auto;">
+          <div style="margin-right: 300px">
+            <input id ="my_text" type="text" class="tftextinput" name="q" size="60" maxlength="120" >
+            <input style="margin-left: 10px" type="submit" value="Search Images" class="tfbutton">
+            </div>
+    </form>     
+
+
+    
+
     </nav>
 
 
+
+       <div style="margin: 0 auto;">  <form class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form></div>
+</div>
 
 
     <div class="container-fluid " style="margin-top: 100px">
@@ -202,6 +219,10 @@
             alert("Encountered an error when starting/stoping container")
         });
   }
+
+
+
+
     </script>
   </body>
 </html>
