@@ -1,5 +1,5 @@
 import os
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import HttpResponse, HttpResponseNotFound
 import socketio
 import pty
@@ -21,8 +21,24 @@ async_mode = "eventlet"
 sio = socketio.Server(async_mode=async_mode)
 
 def index(request):
+		response = redirect('/containers/')
+		return response
+		
+def containers(request):
 		client = docker.from_env()
-		return render(request, 'index.html',{'containers':client.containers.list(all=True),'images':client.images.list(),'info':client.info()})
+		return render(request, 'containers.html',{'containers':client.containers.list(all=True),'info':client.info()})
+
+def images(request):
+		client = docker.from_env()
+		return render(request, 'images.html',{'images':client.images.list()})
+
+def console(request,id):
+	client = docker.from_env()
+	container = client.containers.get(id)
+
+
+	return render(request,'console.html',{'id':id, 'container':container})
+
 
 
 def browse(request):
@@ -91,8 +107,6 @@ def start_stop_remove(request):
 		return  HttpResponse(status=200) 
 
 
-def console(request,id):
-	return render(request,'console.html')
 
 
 def read_and_forward_output(sid):

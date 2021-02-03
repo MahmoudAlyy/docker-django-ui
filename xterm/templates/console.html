@@ -14,7 +14,11 @@
 
         <div style="background: white; padding-bottom: 5px;">
             <span style="font-size: small;">Status: <span style="font-size: small;" id="status">connecting...</span></span>
-            <button id="button"; type="button"; onclick="myFunction()";>Connect</button> 
+            <span style="font-size: small;">
+            Container Info:
+            {{container.attrs.Name|slice:"1:"}} || {{container.attrs.Config.Image}} || {{container.short_id}} || {{container.attrs.Config.Cmd.0}}
+            </span>
+
         </div>
 
         <div style=" width: 100%; height:100%;" id="terminal"></div>
@@ -26,7 +30,6 @@
         var socket = io.connect();
 
         const status = document.getElementById("status")
-        const button = document.getElementById("button")
 
         var term = new Terminal({
             cursorBlink: true,
@@ -40,35 +43,21 @@
         });
 
         socket.on("pty_output", function(output){
-            console.log(output["output"])
+            //console.log(output["output"])
             term.write(output["output"])
         })
 
         socket.on("connect", () => {
         status.innerHTML = '<span style="background-color: lightgreen;">connected</span>'
-        button.innerHTML = 'Disconnect'
-        var last  = window.location.pathname.split("/")[2];
-        console.log(last);
-        socket.emit("start_console", {"Id": last})
+        socket.emit("start_console", {"Id": "{{id}}"})
         term.focus()
 
         })
 
         socket.on("disconnect", () => {
         status.innerHTML =  '<span style="background-color: #ff8383;">disconnected</span>'
-        button.innerHTML = 'Connect'
 
         })
-
-        function myFunction(){
-            if (button.innerHTML =='Connect'){  
-               location.reload();
-            }
-
-            else if (button.innerHTML == "Disconnect"){
-                socket.emit("disconnect_request")
-            }
-        }
 
         function resize(){
         term.fit()

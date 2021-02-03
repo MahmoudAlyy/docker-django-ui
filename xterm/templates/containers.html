@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+      <title>Containers</title>
+      
+      <link href="../static/assets/css/bootstrap.min.css" rel="stylesheet">
+      <link href="../static/assets/css/dashboard.css" rel="stylesheet">
+   
+   </head>
+   <body>
+
+      <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+         <a class="navbar-brand col-sm-3 col-md-2 mr-0" style="color: #fff">Docker on Demand V2</a> 
+
+          <ul class="navbar-nav px-3"  >
+            <li class="nav-item text-nowrap">
+              <a  style="color: #FFF" href="/">Containers</a>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav px-3" >
+            <li class="nav-item text-nowrap">
+              <a style="color: #FFF"  href="/images">Images</a>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav px-3" style="margin-right: auto;">
+            <li class="nav-item text-nowrap">
+              <a style="color: #FFF" href="/browse">Docker Hub</a>
+            </li>
+          </ul>       
+      </nav>
+
+
+
+      <div class="container-fluid " style="margin-top: 100px">
+         <div class="row col-md-12">
+            <h2>Containers</h2>
+            <div class="table-responsive">
+               <table class="table table-bordered table-sm">
+                  <thead>
+                     <tr>
+                        <th>Name</th>
+                        <th>Image</th>
+                        <th>ID</th>
+                        <th>Cmd</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     {% for item in containers %}
+                     <tr>
+                        <td>{{item.attrs.Name|slice:"1:"}}</td>
+                        <td>{{item.attrs.Config.Image}}</td>
+                        <td>{{item.short_id}}</td>
+                        <td>{{item.attrs.Config.Cmd.0}}</td>
+                        <!-- this is a really bad way but im tired... -->
+                        {% if item.status == "running" %}
+                        <td> <span class="status running" id={{item.id}}-span>{{item.status}}</span>
+                        </td>
+                        <td>
+                           <button id={{item.id}} class="button" style="background-color: #ec971f;"
+                              onclick="start_stop_remove(this.id,'stop')">stop </button>
+                           <button class = "button" style = "background-color: #2e6da4;"
+                              onclick=" window.open(window.location.href+'../console/{{item.id}}') " >Console</button> 
+                        </td>
+                        {% else %}
+                        <td> <span class="status exited" id={{item.id}}-span>{{item.status}}</span>
+                        </td>
+                        <td>
+                           <button id={{item.id}} class = "button" style="background-color: #5cb85c;"
+                              onclick="start_stop_remove(this.id,'start')">start</button>
+                           <button id={{item.id}} class="button" style="background-color: #d9534f;"
+                              onclick="start_stop_remove(this.id,'remove')" >Remove</button>      
+                        </td>
+                        {% endif %}
+                     </tr>
+                     {% endfor %}
+                  </tbody>
+               </table>
+            </div>
+
+         </div>
+      </div>
+      <script>
+         
+         
+         function start_stop_remove(id,cmd){
+         
+         document.getElementById(id).innerHTML = "loading...";
+         console.log(id,cmd,id)
+         let url = window.location.href + '../start_stop_remove/'
+         let data = {'id' : id , 'cmd' : cmd};
+         let csrftoken = '{{csrf_token}}'
+         
+         fetch(url, {
+           method: "POST", 
+           body: JSON.stringify(data),
+           dataType: 'json',
+           headers: { "X-CSRFToken": csrftoken },
+         
+         }).then(res => {
+           location.reload();      
+         }).catch(err => {
+                 alert("Encountered an error when starting/stoping container")
+             });
+         }
+         
+      </script>
+   </body>
+</html>
+

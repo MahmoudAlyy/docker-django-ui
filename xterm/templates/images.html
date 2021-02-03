@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+      <title>Images</title>
+      
+      <link href="../static/assets/css/bootstrap.min.css" rel="stylesheet">
+      <link href="../static/assets/css/dashboard.css" rel="stylesheet">
+   
+   </head>
+   <body>
+
+      <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+         <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Docker on Demand V2</a> 
+
+          <ul class="navbar-nav px-3"  >
+            <li class="nav-item text-nowrap">
+              <a  style="color: #FFF" href="/">Containers</a>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav px-3" >
+            <li class="nav-item text-nowrap">
+              <a style="color: #FFF"  href="/images">Images</a>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav px-3" style="margin-right: auto;">
+            <li class="nav-item text-nowrap">
+              <a style="color: #FFF" href="/browse">Docker Hub</a>
+            </li>
+          </ul>
+
+
+          
+      </nav>
+
+
+
+      <div class="container-fluid " style="margin-top: 100px">
+         <div class="row col-md-12">
+            
+            <!-- images -->
+            <h2>Images</h2>
+            <div class="table-responsive">
+               <table class="table table-bordered table-sm">
+                  <thead>
+                     <tr>
+                        <th>Repository</th>
+                        <th>Image Id</th>
+                        <th>~ Size</th>
+                        <th>Actions</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     {% for item in images %}
+                     <tr>
+                        <td>{{item.tags.0}}</td>
+                        <td>{{item.short_id|slice:"7:"}}</td>
+                        <td>{% widthratio item.attrs.Size 1048576 1 %} MB</td>
+                        <td> 
+                           <button id={{item.tags.0}} class = "button" style = "background-color: #2e6da4;"
+                              onclick="launchContainer(this.id)" >Launch</button>
+                           <button id={{item.tags.0}} class = "button" style = "background-color: #d9534f;"
+                              onclick="remove_image(this.id,this)" >Remove</button> 
+                        </td>
+                     </tr>
+                     {% endfor %}
+                  </tbody>
+               </table>
+            </div>
+
+         </div>
+      </div>
+      <script>
+         function launchContainer(name){
+         
+         document.getElementById(name).innerHTML = "loading...";
+         
+         let data = {'name': name};
+         let url = window.location.href + '../create/'
+         let csrftoken = '{{csrf_token}}'
+             
+             fetch(url, {
+           method: "POST", 
+           body: JSON.stringify(data),
+           dataType: 'json',
+           headers: { "X-CSRFToken": csrftoken },
+         
+         }).then(res => {
+           location.reload();      
+         }).catch(err => {
+                 alert("Encountered an error when creating container")
+             });
+         }
+         
+         function remove_image(name,html_object){
+         
+         html_object.innerHTML = "Loading..."
+         let data = {'name': name};
+         let url = window.location.href + '../remove_image/'
+         let csrftoken = '{{csrf_token}}'
+             
+             fetch(url, {
+           method: "POST", 
+           body: JSON.stringify(data),
+           dataType: 'json',
+           headers: { "X-CSRFToken": csrftoken ,'Accept': 'application/json'}
+         
+         }).then(response => {
+           if (response.ok){
+           location.reload();      
+         }
+         return response.json()
+             }).then(data => {
+               html_object.innerHTML = "Remove"
+               let err = data["err"].split("(")[1].substring(1) +data["err"].split("(")[2].substring(12).slice(0, -2)
+               alert(err)
+             });
+         }
+         
+        
+         
+      </script>
+   </body>
+</html>
+
