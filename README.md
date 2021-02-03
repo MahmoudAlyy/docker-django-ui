@@ -1,9 +1,17 @@
 # docker-django-ui
 A simple web UI for managing docker containers and images using django, socket.io and xterm.js
 
-You can start, stop or remove containers, launch or remove images
+You can start, stop or remove containers,
 
-![Imgur](https://i.imgur.com/JTNcEyC.png)
+![Imgur](https://i.imgur.com/1iUzvR3.png)
+
+launch or remove images,
+
+![Imgur](https://i.imgur.com/voZECmr.png)
+
+browse docker hub and pull new images
+
+![Imgur](https://i.imgur.com/MEG3mUA.gif)
 
 or console into them using a fully functional terminal
 
