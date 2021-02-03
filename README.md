@@ -3,11 +3,12 @@ A simple web UI for managing docker containers and images using django, socket.i
 
 You can start, stop or remove containers,
 
-![Imgur](https://i.imgur.com/1iUzvR3.png)
+![Imgur](https://i.imgur.com/voZECmr.png)
+
 
 launch or remove images,
 
-![Imgur](https://i.imgur.com/voZECmr.png)
+![Imgur](https://i.imgur.com/1iUzvR3.png)
 
 browse docker hub and pull new images
 
