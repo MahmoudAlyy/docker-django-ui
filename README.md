@@ -5,7 +5,9 @@ You can start, stop or remove containers,
 
 ![Imgur](https://i.imgur.com/voZECmr.png)
 
-attach to a container using a fully functional terminal,
+attach to a container using a [fully functional terminal](https://github.com/MahmoudAlyy/django-xtermjs/ "django-xtermjs"),
+
+
 
 ![screenshot](https://github.com/MahmoudAlyy/docker-django-ui/blob/main/docker-django-ui.gif)
 
