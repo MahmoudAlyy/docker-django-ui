@@ -178,7 +178,6 @@ def pull_image_input(sid,message):
 		return
 
 	for item in x:
-		print("AAA",item)
 		if "progress" not in item:
 			item["progress"] = ""
 		if "errorDetail" in item:

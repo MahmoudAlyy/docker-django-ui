@@ -36,7 +36,7 @@
 
 
 
-      <div class="container-fluid " style="margin-top: 100px">
+      <div class="container" style="margin-top: 100px">
          <div class="row col-md-12">
             <h2>Containers</h2>
             <div class="table-responsive">
@@ -60,22 +60,23 @@
                         <td>{{item.attrs.Config.Cmd.0}}</td>
                         <!-- this is a really bad way but im tired... -->
                         {% if item.status == "running" %}
-                        <td> <span class="status running" id={{item.id}}-span>{{item.status}}</span>
+                        <td> 
+                           <span class="status running" id={{item.id}}-span>{{item.status}}</span>
                         </td>
                         <td>
-                           <button id={{item.id}} class="button" style="background-color: #ec971f;"
-                              onclick="start_stop_remove(this.id,'stop')">stop </button>
-                           <button class = "button" style = "background-color: #2e6da4;"
-                              onclick=" window.open(window.location.href+'../console/{{item.id}}') " >Console</button> 
+                           <button class="btn btn-info btn-sm"
+                              onclick=" window.open(window.location.href+'../console/{{item.id}}') ">Console</button>
+                           <button id={{item.id}} class="btn btn-warning btn-sm"
+                              onclick="start_stop_remove(this.id,'stop')">Stop </button>
                         </td>
                         {% else %}
                         <td> <span class="status exited" id={{item.id}}-span>{{item.status}}</span>
                         </td>
                         <td>
-                           <button id={{item.id}} class = "button" style="background-color: #5cb85c;"
-                              onclick="start_stop_remove(this.id,'start')">start</button>
-                           <button id={{item.id}} class="button" style="background-color: #d9534f;"
-                              onclick="start_stop_remove(this.id,'remove')" >Remove</button>      
+                           <button id={{item.id}} class = "btn btn-success btn-sm"
+                              onclick="start_stop_remove(this.id,'start')">Start</button>
+                           <button id={{item.id}} class="btn btn-danger btn-sm"
+                              onclick="start_stop_remove(this.id,'remove')">Remove</button>      
                         </td>
                         {% endif %}
                      </tr>
@@ -91,7 +92,7 @@
          
          function start_stop_remove(id,cmd){
          
-         document.getElementById(id).innerHTML = "loading...";
+         document.getElementById(id).innerHTML = "Loading...";
          console.log(id,cmd,id)
          let url = window.location.href + '../start_stop_remove/'
          let data = {'id' : id , 'cmd' : cmd};
