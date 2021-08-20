@@ -14,20 +14,12 @@
 <body style="height: 100%">
 
   <nav class="navbar navbar-dark bg-dark">
-    <span style="font-size: small;">Status: <span id="status">connecting...</span></span>
+    <span style="font-size: medium;">Status: <span id="status">connecting...</span></span>
     <span>
       Container Info:
       {{container.attrs.Name|slice:"1:"}} || {{container.attrs.Config.Image}} || {{container.short_id}} ||
       {{container.attrs.Config.Cmd.0}}
     </span>
-  </nav>
-
-  <nav class="navbar navbar-light bg-light">
-    <div class="container-fluid">
-      <span class="navbar-text">
-        Navbar text with an inline element
-      </span>
-    </div>
   </nav>
 
   <div style=" width: 100%; height:100%;" id="terminal"></div>
