@@ -3,7 +3,8 @@ A simple web UI for managing docker containers & images and interacting with usi
 
 You can start, stop or remove containers,
 
-![Imgur](https://i.imgur.com/voZECmr.png)
+![screenshot](https://github.com/MahmoudAlyy/docker-django-ui/blob/main/docker-django-ui-containers.jpeg)
+
 
 attach to a container using a [fully functional terminal](https://github.com/MahmoudAlyy/django-xtermjs/ "django-xtermjs"),
 
@@ -13,11 +14,13 @@ attach to a container using a [fully functional terminal](https://github.com/Mah
 
 browse docker hub and pull new images &
 
-![Imgur](https://i.imgur.com/MEG3mUA.gif)
+![screenshot](https://github.com/MahmoudAlyy/docker-django-ui/blob/main/docker-django-browse.gif)
+
 
 launch or remove images.
 
-![Imgur](https://i.imgur.com/1iUzvR3.png)
+![screenshot](https://github.com/MahmoudAlyy/docker-django-ui/blob/main/docker-django-ui-images.jpeg)
+
 
 
 
