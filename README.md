@@ -19,7 +19,7 @@ browse docker hub and pull new images &
 
 launch or remove images.
 
-![screenshot](https://github.com/MahmoudAlyy/docker-django-ui/blob/main/docker-django-ui-images.jpeg)
+![screenshot](https://github.com/MahmoudAlyy/docker-django-ui/blob/main/docker-django-ui-images.gif)
 
 
 
