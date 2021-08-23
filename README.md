@@ -34,5 +34,17 @@ venv/bin/python manange.py runserver
 
 wsgi starting up on http://127.0.0.1:8000
 ```
+**Note**:
+    Docker daemon must be running.
 
-  
+
+# TODO
+- [x] Add bootstrap to the frontend.
+- [ ] Dockerize the app and host a live demo.
+- [ ] Use celery and redis to make container operation asynchronous. 
+
+
+
+
+
+
