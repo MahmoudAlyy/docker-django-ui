@@ -17,8 +17,9 @@ import requests
 import json
 from .models import *
 
-async_mode = "eventlet"
-sio = socketio.Server(async_mode=async_mode)
+#async_mode = "eventlet"
+#sio = socketio.Server(async_mode=async_mode)
+sio = socketio.Server(async_mode='eventlet')\
 
 def index(request):
 		response = redirect('/containers/')
