@@ -26,7 +26,7 @@ SECRET_KEY = 'n)=9_c6x9a8-8qi3#fpok9ek4xd9ck$ih-+nufoj406iq3-v2g'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'xterm'
 ]
 
+DJANGO_LIVESYNC = {
+    'PORT': 9999 # this is optional and is default set to 9001.
+}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
