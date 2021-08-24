@@ -37,14 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'livesync',
+    #'livesync',
     'django.contrib.staticfiles',
     'xterm'
 ]
 
-DJANGO_LIVESYNC = {
-    'PORT': 9999 # this is optional and is default set to 9001.
-}
+#DJANGO_LIVESYNC = {
+#    'PORT': 9999 # this is optional and is default set to 9001.
+#}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'livesync.core.middleware.DjangoLiveSyncMiddleware',
+    #'livesync.core.middleware.DjangoLiveSyncMiddleware',
 
 ]
 
