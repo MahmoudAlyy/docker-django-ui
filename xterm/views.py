@@ -9,13 +9,11 @@ import struct
 import fcntl
 import termios 
 import signal
-import eventlet
 import docker
 import time
 import requests
 
 import json
-from .models import *
 
 sio = socketio.Server(async_mode='eventlet')
 
