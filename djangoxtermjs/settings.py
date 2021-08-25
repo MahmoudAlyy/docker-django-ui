@@ -24,10 +24,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'n)=9_c6x9a8-8qi3#fpok9ek4xd9ck$ih-+nufoj406iq3-v2g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = (os.environ.get('DEBUG') == 'True')
 
-ALLOWED_HOSTS = ['127.0.0.1']
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -41,6 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'xterm'
 ]
+
+DJANGO_LIVESYNC = {
+    'PORT': 9999 # this is optional and is default set to 9001.
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -124,3 +127,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+static_files = {
+    '/static': './static',
+}
