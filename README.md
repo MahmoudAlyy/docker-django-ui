@@ -1,25 +1,27 @@
 # docker-django-ui
 A simple web UI for managing docker containers & images and interacting with using a fully functional terminal using django, socket.io & xterm.js 
 
+Live demo : http://35.224.213.24/
+
 You can start, stop or remove containers,
 
-![screenshot](https://github.com/MahmoudAlyy/docker-django-ui/blob/main/docker-django-ui-containers.jpeg)
+![screenshot](https://github.com/MahmoudAlyy/docker-django-ui/blob/main/readme_images/docker-django-ui-containers.jpeg)
 
 
 attach to a container using a [fully functional terminal](https://github.com/MahmoudAlyy/django-xtermjs/ "django-xtermjs"),
 
 
 
-![screenshot](https://github.com/MahmoudAlyy/docker-django-ui/blob/main/docker-django-ui.gif)
+![screenshot](https://github.com/MahmoudAlyy/docker-django-ui/blob/main/readme_images/docker-django-ui.gif)
 
 browse docker hub and pull new images &
 
-![screenshot](https://github.com/MahmoudAlyy/docker-django-ui/blob/main/docker-django-browse.gif)
+![screenshot](https://github.com/MahmoudAlyy/docker-django-ui/blob/main/readme_images/docker-django-browse.gif)
 
 
 launch or remove images.
 
-![screenshot](https://github.com/MahmoudAlyy/docker-django-ui/blob/main/docker-django-ui-images.gif)
+![screenshot](https://github.com/MahmoudAlyy/docker-django-ui/blob/main/readme_images/docker-django-ui-images.gif)
 
 
 
@@ -40,7 +42,7 @@ wsgi starting up on http://127.0.0.1:8000
 
 # TODO
 - [x] Add bootstrap to the frontend.
-- [ ] Dockerize the app and host a live demo.
+- [x] Dockerize the app and host a live demo.
 - [ ] Use celery and redis to make container operation asynchronous. 
 
 
