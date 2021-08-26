@@ -15,7 +15,7 @@ import eventlet
 import eventlet.wsgi
 
 from xterm.views import sio
-from settings import static_files
+from djangoxtermjs.settings import static_files
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djangoxtermjs.settings')
 
