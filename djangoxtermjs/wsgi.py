@@ -17,13 +17,12 @@ import eventlet.wsgi
 from xterm.views import sio
 from djangoxtermjs.settings import static_files
 
-#os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djangoxtermjs.settings')
 
 from django.core.wsgi import get_wsgi_application
 
 django_app = get_wsgi_application()
 
-#serve statif file
+#serve static file
 application = socketio.WSGIApp(sio, django_app,static_files=static_files)
 
 eventlet.wsgi.server(eventlet.listen(('', 8000)), application)
