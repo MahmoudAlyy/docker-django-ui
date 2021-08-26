@@ -1,0 +1,10 @@
+version: "3.9"
+   
+services:
+  docker:
+    image: docker
+  web:
+    build: .
+    command: uwsgi  --ini uwsgi_settings.ini 
+    ports:
+      - "80:80"
