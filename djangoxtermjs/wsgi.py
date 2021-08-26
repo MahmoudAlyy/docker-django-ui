@@ -9,8 +9,7 @@ https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/
 
 import os
 
-from django.core.wsgi import get_wsgi_application
-import socketio
+#import socketio
 import eventlet
 import eventlet.wsgi
 
@@ -19,6 +18,8 @@ from djangoxtermjs.settings import static_files
 
 #os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djangoxtermjs.settings')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'djangoxtermjs.settings'
+
+from django.core.wsgi import get_wsgi_application
 
 django_app = get_wsgi_application()
 

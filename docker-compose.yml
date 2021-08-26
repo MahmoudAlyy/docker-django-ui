@@ -5,6 +5,6 @@ services:
     image: docker
   web:
     build: .
-    command: uwsgi  --ini uwsgi_settings.ini 
+    command: uwsgi --plugins-dir=/usr/lib/uwsgi/plugins --ini uwsgi_settings.ini 
     ports:
-      - "80:80"
+      - "8000:80"
