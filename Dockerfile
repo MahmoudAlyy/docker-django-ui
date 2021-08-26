@@ -1,6 +1,8 @@
 FROM python:3.7-slim
 
 ENV PYTHONUNBUFFERED 1
+ENV DEBUG True
+
 WORKDIR /code
 COPY requirements.txt /code/
 RUN pip3.7 install -r requirements.txt

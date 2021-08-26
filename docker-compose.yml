@@ -5,6 +5,7 @@ services:
     image: docker
   web:
     build: .
-    command: uwsgi --plugins-dir=/usr/lib/uwsgi/plugins --ini uwsgi_settings.ini 
+    #command: uwsgi --plugins-dir=/usr/lib/uwsgi/plugins --ini uwsgi_settings.ini 
+    command: python manage.py runserver
     ports:
-      - "8000:80"
+      - "80:80"
