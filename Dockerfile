@@ -9,6 +9,8 @@ RUN mkdir /code
 WORKDIR /code
 COPY . /code/
 
+RUN cp /usr/lib/uwsgi/plugins/python3_plugin.so /code/
+
 RUN pip3 install -r requirements.txt
 
 EXPOSE 80
