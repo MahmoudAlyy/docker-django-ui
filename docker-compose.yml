@@ -3,6 +3,9 @@ version: "3.9"
 services:
   web:
     build: .
+    image: docker-django-ui-web-image
+    container_name: docker-django-ui-web-container
+
     #command: uwsgi --plugins-dir=/usr/lib/uwsgi/plugins --ini uwsgi_settings.ini 
     command: python manage.py runserver
     ports:

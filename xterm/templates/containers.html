@@ -59,9 +59,29 @@
                </thead>
                <tbody>
                   {% for item in containers %}
+
+                  {% if item.attrs.Name|slice:"1:" == "docker-django-ui-web-container" %}
+
+                  <tr class="table-secondary">
+                     <td>{{item.attrs.Name|slice:"1:"}}</td>
+                     <td>{{item.image.tags.0}}</td>
+                     <td>{{item.short_id}}</td>
+                     <td>{{item.attrs.Config.Cmd.0}}</td>
+
+                     <td>
+                        <div class='d-flex'>
+                           <span class="btn btn-success btn-sm" id={{item.id}}-span>{{item.status}}</span>
+                        </div>
+
+                     </td>
+                     <td></td>
+
+                  </tr>
+
+                  {% else %}
                   <tr>
                      <td>{{item.attrs.Name|slice:"1:"}}</td>
-                     <td>{{item.attrs.Config.Image}}</td>
+                     <td>{{item.image.tags.0}}</td>
                      <td>{{item.short_id}}</td>
                      <td>{{item.attrs.Config.Cmd.0}}</td>
                      <!-- this is a really bad way but im tired... -->
@@ -96,6 +116,8 @@
                      </td>
                      {% endif %}
                   </tr>
+
+                  {% endif %}
                   {% endfor %}
                </tbody>
             </table>

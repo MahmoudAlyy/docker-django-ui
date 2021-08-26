@@ -56,12 +56,30 @@
                   </tr>
                </thead>
                <tbody>
+
                   {% for item in images %}
+                  {% if item.tags.0 == "docker-django-ui-web-image:latest" %}
+
+                  <tr class="table-secondary">
+                     {% if item.tags.0 %}
+                     <td>{{item.tags.0}}</td>
+                     {% else %}
+                     <td> &lt;none&gt; </td>
+                     {% endif %}
+
+                     <td>{{item.short_id|slice:"7:"}}</td>
+                     <td>{% widthratio item.attrs.Size 1048576 1 %} MB</td>
+                     
+                     <td></td>
+
+                  </tr>
+                  {% else %}
+
                   <tr>
                      {% if item.tags.0 %}
                      <td>{{item.tags.0}}</td>
                      {% else %}
-                     <td>	&lt;none&gt; </td>
+                     <td> &lt;none&gt; </td>
                      {% endif %}
 
                      <td>{{item.short_id|slice:"7:"}}</td>
@@ -73,7 +91,10 @@
                            onclick="remove_image(this.id,this)">Remove</button>
                      </td>
                   </tr>
+                  {% endif %}
+
                   {% endfor %}
+
                </tbody>
             </table>
          </div>
