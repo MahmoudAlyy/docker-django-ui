@@ -24,4 +24,4 @@ django_app = get_wsgi_application()
 #serve statif file
 application = socketio.WSGIApp(sio, django_app,static_files=static_files)
 
-eventlet.wsgi.server(eventlet.listen(('', 8000)), application)
+eventlet.wsgi.server(eventlet.listen(('', 80)), application)
