@@ -9,8 +9,9 @@
 
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
       integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-   integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"></script>
 
 </head>
 
@@ -57,13 +58,18 @@
                <tbody>
                   {% for item in images %}
                   <tr>
+                     {% if item.tags.0 %}
                      <td>{{item.tags.0}}</td>
+                     {% else %}
+                     <td>	&lt;none&gt; </td>
+                     {% endif %}
+
                      <td>{{item.short_id|slice:"7:"}}</td>
                      <td>{% widthratio item.attrs.Size 1048576 1 %} MB</td>
                      <td class='d-flex'>
-                        <button id={{item.tags.0}} class="btn btn-sm btn-primary me-4"
+                        <button id={{item.short_id}} class="btn btn-sm btn-primary me-4"
                            onclick="runContainer(this.id)">Run</button>
-                        <button id={{item.tags.0}} class="btn btn-sm btn-danger"
+                        <button id={{item.short_id}} class="btn btn-sm btn-danger"
                            onclick="remove_image(this.id,this)">Remove</button>
                      </td>
                   </tr>
@@ -118,6 +124,7 @@
             }
             return response.json()
          }).then(data => {
+            //TODO
             html_object.innerHTML = "Remove"
             let err = data["err"].split("(")[1].substring(1) + data["err"].split("(")[2].substring(12).slice(0, -2)
             alert(err)

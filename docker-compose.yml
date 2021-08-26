@@ -8,4 +8,4 @@ services:
     #command: uwsgi --plugins-dir=/usr/lib/uwsgi/plugins --ini uwsgi_settings.ini 
     command: python manage.py runserver
     ports:
-      - "80:80"
+      - "80:8000"

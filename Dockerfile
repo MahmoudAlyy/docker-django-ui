@@ -1,4 +1,4 @@
-FROM python:3.7-slim
+FROM python:3.7-slim-buster
 
 ENV PYTHONUNBUFFERED 1
 ENV DEBUG True
@@ -15,3 +15,5 @@ RUN apt-get update && apt-get install -y \
 #RUN cp /usr/lib/uwsgi/plugins/python3_plugin.so /code/
 
 EXPOSE 80
+
+CMD ["python", "manage.py", "runserver"]
