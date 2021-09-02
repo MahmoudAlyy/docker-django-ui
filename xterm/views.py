@@ -14,6 +14,7 @@ import time
 import requests
 
 import json
+from celery.result import AsyncResult
 
 sio = socketio.Server(async_mode='eventlet')
 
@@ -53,9 +54,9 @@ def browse(request):
 
 def create(request):
 	if request.method == 'POST':
-		client = docker.APIClient()
+		client = docker.from_env()
 		name = json.load(request)['name']
-		container = client.create_container(
+		client.containers.run(
 			name,
 			stdin_open = True,
 			detach = True,
@@ -64,7 +65,6 @@ def create(request):
 		)
 		#TODO cmd
 
-		client.start(container)
 		return  HttpResponse(status=200) 
 	else :
 		return  HttpResponse(status=404) 
@@ -104,8 +104,6 @@ def start_stop_remove(request):
 		return  HttpResponse(status=200) 
 
 
-
-
 def read_and_forward_output(sid):
 	# get socket object
 	socket = sio.get_session(sid)['socket']
@@ -124,7 +122,14 @@ def read_and_forward_output(sid):
 			# decode("cp437") ; to decode vim's output
 			sio.emit("pty_output", {"output": output.decode("cp437")},room=sid)
 
-	
+
+def get_progress(request, task_id):
+    result = AsyncResult(task_id)
+    response_data = {
+        'state': result.state,
+        'details': result.info,
+    }
+    return HttpResponse(json.dumps(response_data), content_type='application/json')
 	   
 @sio.event
 def resize(sid, message): 

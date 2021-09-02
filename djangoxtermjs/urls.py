@@ -32,7 +32,7 @@ urlpatterns = [
     path('remove_image/', xterms_views.remove_image, name='remove_image'),
     path('create/', xterms_views.create, name='create'),
     path('browse/', xterms_views.browse, name='browse'),
-
+    path('get_progress/<slug:task_id>/', xterms_views.get_progress, name='get_progress')
 
 
 
