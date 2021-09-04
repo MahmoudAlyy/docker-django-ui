@@ -43,7 +43,7 @@ wsgi starting up on http://127.0.0.1:8000
 # TODO
 - [x] Add bootstrap to the frontend.
 - [x] Dockerize the app and host a live demo.
-- [ ] Use celery and redis to make container operation asynchronous. 
+- [x] Use celery and redis to make container operation asynchronous. 
 
 
 
