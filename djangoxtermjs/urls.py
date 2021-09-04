@@ -23,17 +23,21 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', xterms_views.index, name='index'),
+
     path('images/', xterms_views.images, name='images'),
+    path('ajaxImages/', xterms_views.ajaxImages, name='ajaxImages'),
+
     path('containers/', xterms_views.containers, name='containers'),
+    path('ajaxContainers/', xterms_views.ajaxContainers, name='ajaxContainers'),
 
 
     path('console/<slug:id>/', xterms_views.console, name='console'),
     path('start_stop_remove/', xterms_views.start_stop_remove, name='start_stop_remove'),
-    path('remove_image/', xterms_views.remove_image, name='remove_image'),
-    path('create/', xterms_views.create, name='create'),
+    path('removeImage/', xterms_views.removeImage, name='removeImage'),
+    path('runImage/', xterms_views.runImage, name='runImage'),
     path('browse/', xterms_views.browse, name='browse'),
 
-
+    path('get_progress/<slug:task_id>/', xterms_views.get_progress, name='get_progress'),
 
 
 ]+    static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

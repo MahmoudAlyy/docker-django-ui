@@ -12,6 +12,7 @@
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
       crossorigin="anonymous"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 </head>
 
@@ -40,11 +41,15 @@
       </div>
    </nav>
 
-
+   <div id="toastContainer" class="toast-container position-fixed p-3 top-0 end-0">
+   </div>
 
    <div class="container">
       <div class="mt-5 mx-5">
-         <h2>Containers</h2>
+         <div class="d-flex d-flex justify-content-between">
+            <h2>Containers</h2>
+            <button class="btn btn-md btn-secondary" onclick="updatePage()">Refresh</button>
+         </div>
          <div class="table-responsive">
             <table class="table">
                <thead>
@@ -57,68 +62,10 @@
                      <th scope="col">Actions</th>
                   </tr>
                </thead>
-               <tbody>
-                  {% for item in containers %}
+               <tbody id="content">
 
-                  {% if item.attrs.Name|slice:"1:" == "docker-django-ui-web-container" %}
+                  {% include "ajaxContainers.html" %}
 
-                  <tr class="table-secondary">
-                     <td>{{item.attrs.Name|slice:"1:"}}</td>
-                     <td>{{item.image.tags.0}}</td>
-                     <td>{{item.short_id}}</td>
-                     <td>{{item.attrs.Config.Cmd.0}}</td>
-
-                     <td>
-                        <div class='d-flex'>
-                           <span class="btn btn-success btn-sm" id={{item.id}}-span>{{item.status}}</span>
-                        </div>
-
-                     </td>
-                     <td></td>
-
-                  </tr>
-
-                  {% else %}
-                  <tr>
-                     <td>{{item.attrs.Name|slice:"1:"}}</td>
-                     <td>{{item.image.tags.0}}</td>
-                     <td>{{item.short_id}}</td>
-                     <td>{{item.attrs.Config.Cmd.0}}</td>
-                     <!-- this is a really bad way but im tired... -->
-                     {% if item.status == "running" %}
-                     <td>
-                        <div class='d-flex'>
-                           <span class="btn btn-success btn-sm" id={{item.id}}-span>{{item.status}}</span>
-                        </div>
-                     </td>
-                     <td>
-                        <div class='d-flex'>
-                           <button class="btn btn-info btn-sm me-3"
-                              onclick=" window.open(window.location.href+'../console/{{item.id}}') ">Console</button>
-                           <button id={{item.id}} class="btn btn-warning btn-sm"
-                              onclick="start_stop_remove(this.id,'stop')">Stop </button>
-                        </div>
-                     </td>
-                     {% else %}
-                     <td>
-                        <div class='d-flex'>
-                           <span class="btn btn-secondary btn-sm" id={{item.id}}-span>{{item.status}}</span>
-                        </div>
-                     </td>
-                     <td>
-                        <div class='d-flex'>
-
-                           <button id={{item.id}} class="btn btn-success btn-sm me-3"
-                              onclick="start_stop_remove(this.id,'start')">Start</button>
-                           <button id={{item.id}} class="btn btn-danger btn-sm"
-                              onclick="start_stop_remove(this.id,'remove')">Remove</button>
-                        </div>
-                     </td>
-                     {% endif %}
-                  </tr>
-
-                  {% endif %}
-                  {% endfor %}
                </tbody>
             </table>
          </div>
@@ -126,7 +73,6 @@
       </div>
    </div>
    <script>
-
 
       function start_stop_remove(id, cmd) {
 
@@ -142,11 +88,96 @@
             dataType: 'json',
             headers: { "X-CSRFToken": csrftoken },
 
-         }).then(res => {
-            location.reload();
-         }).catch(err => {
-            alert("Encountered an error when starting/stoping container")
-         });
+         }).then(response => {
+            return response.json();
+
+         }).then(data => {
+            console.log(data["task_id"])
+            return getUpdate(data["task_id"])
+
+         }).then(() => {
+            updatePage();
+         })
+      }
+
+      function updatePage() {
+         let url = window.location.href + '../ajaxContainers/'
+         fetch(url, {
+            method: "GET",
+         }).then((response) => {
+            return response.text()
+         }).then((html) => {
+            document.getElementById('content').innerHTML = html;
+         })
+      };
+
+      function uniqueID() {
+         return Math.floor(Math.random() * Date.now())
+      }
+
+      function createToastAlert(msg, isFailure) {
+
+         let div_id = uniqueID();
+
+         const toastHtml =
+            `<div id="` + div_id + `" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+       <div class="d-flex">
+          <div class="toast-body">`
+            + msg +
+            `</div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+             aria-label="Close"></button>
+       </div>
+    </div>
+    `;
+
+         var toastContainer = document.getElementById('toastContainer');
+         toastContainer.innerHTML += toastHtml;
+
+         // if failure msg, make background color red
+         if (isFailure) {
+            $('#' + div_id).removeClass('bg-primary').addClass('bg-danger');
+         }
+
+         $('#' + div_id).toast('show')
+         setTimeout(function () {
+            $('#' + div_id).toast('hide')
+
+         }, 5000);
+      }
+
+      function sleep(ms) {
+         return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      async function getUpdate(task_id) {
+         var flag = true;
+         let progressUrl = window.location.href + '../get_progress/';
+
+         while (flag) {
+
+            await sleep(2000);
+            await fetch(progressUrl + task_id)
+               .then(response => response.json())
+               .then(data => {
+                  console.log(data)
+                  console.log(data['state'])
+
+                  if (data['state'] == 'SUCCESS') {
+                     flag = false;
+                     let msg = data['details']
+                     createToastAlert(msg, false)
+                  }
+
+                  else if (data['state'] == 'FAILURE') {
+                     flag = false;
+                     let msg = data['details']
+                     createToastAlert(msg, true)
+
+                  }
+               })
+         }
+         return
       }
 
    </script>

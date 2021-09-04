@@ -13,3 +13,20 @@ services:
     # attach docker sock to interact with the host docker
     volumes: 
       - /var/run/docker.sock:/var/run/docker.sock:rw
+  
+  redis:
+    image: redis:alpine
+    container_name: docker-django-ui-redis-container
+
+
+  celery:
+    restart: always
+    build: .
+    container_name: docker-django-ui-celery-container
+
+    command: celery -A djangoxtermjs worker -l info
+    volumes: 
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+    depends_on:
+      - web
+      - redis

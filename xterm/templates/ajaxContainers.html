@@ -1,0 +1,67 @@
+{% for item in containers %}
+
+{% if "docker-django-ui" in  item.attrs.Name %}
+
+<tr class="table-secondary">
+   <td>{{item.attrs.Name|slice:"1:"}}</td>
+   <td>{{item.image.tags.0}}</td>
+   <td>{{item.short_id}}</td>
+   <td>{{item.attrs.Config.Cmd.0}}</td>
+
+   <td>
+      <div class='d-flex'>
+         <span class="btn btn-success btn-sm" id={{item.id}}-span>{{item.status}}</span>
+      </div>
+
+   </td>
+   <td></td>
+
+</tr>
+
+{% else %}
+<tr>
+   <td>{{item.attrs.Name|slice:"1:"}}</td>
+
+   {% if item.image.tags.0 %}
+   <td>{{item.image.tags.0}}</td>
+   {% else %}
+   <td> &lt;none&gt; </td>
+   {% endif %}
+
+   <td>{{item.short_id}}</td>
+   <td>{{item.attrs.Config.Cmd.0}}</td>
+
+   {% if item.status == "running" %}
+   <td>
+      <div class='d-flex'>
+         <span class="btn btn-success btn-sm" id={{item.id}}-span>{{item.status}}</span>
+      </div>
+   </td>
+   <td>
+      <div class='d-flex'>
+         <button class="btn btn-info btn-sm me-3"
+            onclick=" window.open(window.location.href+'../console/{{item.id}}') ">Console</button>
+         <button id={{item.id}} class="btn btn-warning btn-sm"
+            onclick="start_stop_remove(this.id,'stop')">Stop </button>
+      </div>
+   </td>
+   {% else %}
+   <td>
+      <div class='d-flex'>
+         <span class="btn btn-secondary btn-sm" id={{item.id}}-span>{{item.status}}</span>
+      </div>
+   </td>
+   <td>
+      <div class='d-flex'>
+
+         <button id={{item.id}} class="btn btn-success btn-sm me-3"
+            onclick="start_stop_remove(this.id,'start')">Start</button>
+         <button id={{item.id}} class="btn btn-danger btn-sm"
+            onclick="start_stop_remove(this.id,'remove')">Remove</button>
+      </div>
+   </td>
+   {% endif %}
+</tr>
+
+{% endif %}
+{% endfor %}
