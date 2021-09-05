@@ -35,11 +35,6 @@ def images(request):
 # TODO split front from back
 def ajaxImages(request):
 	client = docker.from_env()
-	out = []
-	for item in client.images.list():
-		#print(item.tags[0])
-		out.append(item.tags[0])
-	
 	return render(request, 'ajaxImages.html',{'images':client.images.list()})
 		
 def ajaxContainers(request):
