@@ -16,10 +16,14 @@ services:
   
   redis:
     image: redis:alpine
+    container_name: docker-django-ui-redis-container
+
 
   celery:
     restart: always
     build: .
+    container_name: docker-django-ui-celery-container
+
     command: celery -A djangoxtermjs worker -l info
     volumes: 
       - /var/run/docker.sock:/var/run/docker.sock:rw
