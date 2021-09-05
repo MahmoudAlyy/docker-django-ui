@@ -12,6 +12,8 @@
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
       crossorigin="anonymous"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+ 
 
 </head>
 
@@ -40,11 +42,17 @@
       </div>
    </nav>
 
+   <div id="toastContainer" class="toast-container position-fixed p-3 top-0 end-0">
+   </div>
+
    <div class="container">
       <div class="mt-5 mx-5">
 
          <!-- images -->
+         <div class="d-flex d-flex justify-content-between">
          <h2>Images</h2>
+         <button class="btn btn-md btn-secondary" onclick="updatePage()">Refresh</button>
+         </div>
          <div class="table-responsive">
             <table class="table">
                <thead>
@@ -55,46 +63,10 @@
                      <th scope="col">Actions</th>
                   </tr>
                </thead>
-               <tbody>
+               <tbody id="content">
 
-                  {% for item in images %}
-                  {% if item.tags.0 == "docker-django-ui-web-image:latest" %}
-
-                  <tr class="table-secondary">
-                     {% if item.tags.0 %}
-                     <td>{{item.tags.0}}</td>
-                     {% else %}
-                     <td> &lt;none&gt; </td>
-                     {% endif %}
-
-                     <td>{{item.short_id|slice:"7:"}}</td>
-                     <td>{% widthratio item.attrs.Size 1048576 1 %} MB</td>
-                     
-                     <td></td>
-
-                  </tr>
-                  {% else %}
-
-                  <tr>
-                     {% if item.tags.0 %}
-                     <td>{{item.tags.0}}</td>
-                     {% else %}
-                     <td> &lt;none&gt; </td>
-                     {% endif %}
-
-                     <td>{{item.short_id|slice:"7:"}}</td>
-                     <td>{% widthratio item.attrs.Size 1048576 1 %} MB</td>
-                     <td class='d-flex'>
-                        <button id={{item.short_id}} class="btn btn-sm btn-primary me-4"
-                           onclick="runContainer(this.id)">Run</button>
-                        <button id={{item.short_id}} class="btn btn-sm btn-danger"
-                           onclick="remove_image(this.id,this)">Remove</button>
-                     </td>
-                  </tr>
-                  {% endif %}
-
-                  {% endfor %}
-
+                  {% include "ajaxImages.html" %}
+                  
                </tbody>
             </table>
          </div>
@@ -103,14 +75,62 @@
    </div>
 
 
-
    <script>
-      function runContainer(name) {
 
-         document.getElementById(name).innerHTML = "Loading...";
+
+      function updatePage() {
+         let url = window.location.href + '../ajaxImages/'
+         fetch(url, {
+            method: "GET",
+         }).then((response) => {
+            return response.text()
+         }).then((html) => {
+            document.getElementById('content').innerHTML = html;
+         })
+      };
+
+      function uniqueID() {
+         return Math.floor(Math.random() * Date.now())
+      }
+
+      function createToastAlert(msg, isFailure) {
+
+         let div_id = uniqueID();
+
+         const toastHtml =
+            `<div id="` + div_id + `" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+               <div class="toast-body">`
+            + msg +
+            `</div>
+               <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                  aria-label="Close"></button>
+            </div>
+         </div>
+         `;
+
+         var toastContainer = document.getElementById('toastContainer');
+         toastContainer.innerHTML += toastHtml;
+
+         // if failure msg, make background color red
+         if (isFailure) {
+            $('#' + div_id).removeClass('bg-primary').addClass('bg-danger');
+         }
+
+         $('#' + div_id).toast('show')
+         setTimeout(function () {
+            $('#' + div_id).toast('hide')
+
+         }, 5000);
+      }
+
+
+      function runImage(name, html_btn) {
+
+         html_btn.innerHTML = "Loading...";
 
          let data = { 'name': name };
-         let url = window.location.href + '../create/'
+         let url = window.location.href + '../runImage/'
          let csrftoken = '{{csrf_token}}'
 
          fetch(url, {
@@ -119,18 +139,24 @@
             dataType: 'json',
             headers: { "X-CSRFToken": csrftoken },
 
-         }).then(res => {
-            location.reload();
-         }).catch(err => {
-            alert("Encountered an error when creating container")
-         });
+         }).then((response) => {
+            return response.json()
+
+         }).then(data => {
+            console.log(data["task_id"])
+            return getUpdate(data["task_id"])
+
+         }).then(() =>{
+            updatePage();
+         })
       }
 
-      function remove_image(name, html_object) {
+      function removeImage(name, html_btn) {
 
-         html_object.innerHTML = "Loading..."
+         html_btn.innerHTML = "Loading...";
+
          let data = { 'name': name };
-         let url = window.location.href + '../remove_image/'
+         let url = window.location.href + '../removeImage/'
          let csrftoken = '{{csrf_token}}'
 
          fetch(url, {
@@ -140,17 +166,52 @@
             headers: { "X-CSRFToken": csrftoken, 'Accept': 'application/json' }
 
          }).then(response => {
-            if (response.ok) {
-               location.reload();
-            }
-            return response.json()
+            return response.json();
+
          }).then(data => {
-            //TODO
-            html_object.innerHTML = "Remove"
-            let err = data["err"].split("(")[1].substring(1) + data["err"].split("(")[2].substring(12).slice(0, -2)
-            alert(err)
-         });
+            console.log(data["task_id"])
+            return getUpdate(data["task_id"])
+
+         }).then(() => {
+            updatePage();
+         })
       }
+
+
+      function sleep(ms) {
+         return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      async function getUpdate(task_id) {
+         var flag = true;
+         let progressUrl = window.location.href + '../get_progress/';
+
+         while (flag) {
+
+            await sleep(2000);
+            await fetch(progressUrl + task_id)
+               .then(response => response.json())
+               .then(data => {
+                  console.log(data)
+                  console.log(data['state'])
+
+                  if (data['state'] == 'SUCCESS') {
+                     flag = false;
+                     let msg = data['details']
+                     createToastAlert(msg,false)
+                  }
+
+                  else if (data['state'] == 'FAILURE') {
+                     flag = false;
+                     let msg = data['details']
+                     createToastAlert(msg, true)
+
+                  }
+               })
+         }
+         return
+      }
+
 
    </script>
 </body>

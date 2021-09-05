@@ -1,6 +1,7 @@
 import os
+from xterm.task import *
 from django.shortcuts import render,redirect
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound,JsonResponse
 import socketio
 import pty
 import select
@@ -30,6 +31,21 @@ def images(request):
 		client = docker.from_env()
 		return render(request, 'images.html',{'images':client.images.list()})
 
+# to dynamicly update the content of django template without reloading 
+# TODO split front from back
+def ajaxImages(request):
+	client = docker.from_env()
+	out = []
+	for item in client.images.list():
+		#print(item.tags[0])
+		out.append(item.tags[0])
+	
+	return render(request, 'ajaxImages.html',{'images':client.images.list()})
+		
+def ajaxContainers(request):
+	client = docker.from_env()
+	return render(request, 'ajaxContainers.html',{'containers':client.containers.list(all=True),'info':client.info()})
+
 def console(request,id):
 	client = docker.from_env()
 	container = client.containers.get(id)
@@ -40,50 +56,32 @@ def console(request,id):
 
 
 def browse(request):
-    page_number = request.GET.get('page','1')
-    q = request.GET.get('q','')
+	page_number = request.GET.get('page','1')
+	q = request.GET.get('q','')
 
-    url = 'https://hub.docker.com/api/content/v1/products/search?page='+page_number+'&page_size=15&q='+q+'&type=image'
-    headers = {'Search-Version': 'v3'}
+	url = 'https://hub.docker.com/api/content/v1/products/search?page='+page_number+'&page_size=15&q='+q+'&type=image'
+	headers = {'Search-Version': 'v3'}
 
-    page = requests.get(url,headers=headers)
-    summary = page.json()['summaries']
+	page = requests.get(url,headers=headers)
+	summary = page.json()['summaries']
 
 
-    return render(request, 'browse.html', {'summary': summary,'q':q})
+	return render(request, 'browse.html', {'summary': summary,'q':q})
 
-def create(request):
+def runImage(request):
 	if request.method == 'POST':
-		client = docker.from_env()
 		name = json.load(request)['name']
-		client.containers.run(
-			name,
-			stdin_open = True,
-			detach = True,
-			tty=True,
-			#command= 'bin/sh',
-		)
-		#TODO cmd
+		task = runImageTask.delay(name)
+		return JsonResponse({"task_id":task.task_id})
+	
 
-		return  HttpResponse(status=200) 
-	else :
-		return  HttpResponse(status=404) 
-
-def remove_image(request):
+def removeImage(request):
 	if request.method == 'POST':
-
 		name = json.load(request)['name']
+		task = removeImageTask.delay(name)
 		client = docker.from_env()
-		try:
-			client.images.remove(image=name)
-			return  HttpResponse(status=200) 
-		except docker.errors.APIError as x:
-			
-			response = HttpResponse(json.dumps({'err': str(x)}), 
-			content_type='application/json')
-			response.status_code = 409
-			
-			return response 
+		return JsonResponse({"task_id":task.task_id})
+
 
 
 def start_stop_remove(request):
@@ -96,12 +94,12 @@ def start_stop_remove(request):
 		client = docker.from_env()
 		container = client.containers.get(id)
 		if cmd == "start":
-			container.start()
+			task = runContainerTask.delay(id)
 		elif cmd == "stop":
-			container.stop()
+			task = stopContainerTask.delay(id)
 		elif cmd == "remove":
-			container.remove()
-		return  HttpResponse(status=200) 
+			task = removeContainerTask.delay(id)
+		return JsonResponse({"task_id":task.task_id})
 
 
 def read_and_forward_output(sid):
@@ -122,14 +120,13 @@ def read_and_forward_output(sid):
 			# decode("cp437") ; to decode vim's output
 			sio.emit("pty_output", {"output": output.decode("cp437")},room=sid)
 
-
 def get_progress(request, task_id):
-    result = AsyncResult(task_id)
-    response_data = {
-        'state': result.state,
-        'details': result.info,
-    }
-    return HttpResponse(json.dumps(response_data), content_type='application/json')
+	task = AsyncResult(task_id)
+	response_data = {
+		'state': task.state,
+		'details': str(task.info)
+	}
+	return JsonResponse(response_data)
 	   
 @sio.event
 def resize(sid, message): 
