@@ -135,8 +135,9 @@ static_files = {
 
 
 
-BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+BROKER_URL = "redis://redis:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"
+
 CELERY_TIMEZONE = 'Africa/Nairobi'
 
 CELERY_TASK_SERIALIZER = 'json'
