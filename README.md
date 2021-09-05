@@ -1,5 +1,5 @@
 # docker-django-ui
-A simple web UI for managing docker containers & images and interacting with using a fully functional terminal using django, socket.io & xterm.js 
+A simple web UI for managing docker containers & images and interacting with using a fully functional terminal using django, celery, redis, socket.io, xterm.js & bootstrap.
 
 Live demo : http://35.224.213.24/
 
@@ -28,13 +28,10 @@ launch or remove images.
 
 
 # Installation
+
 Clone the repository and cd into it, then run:
 ```
-python -m venv venv
-venv/bin/pip install -r requirements.txt
-venv/bin/python manange.py runserver
-
-wsgi starting up on http://127.0.0.1:8000
+docker-compose up
 ```
 **Note**:
     Docker daemon must be running.
@@ -44,9 +41,7 @@ wsgi starting up on http://127.0.0.1:8000
 - [x] Add bootstrap to the frontend.
 - [x] Dockerize the app and host a live demo.
 - [x] Use celery and redis to make container operation asynchronous. 
-
-
-
+- [ ] Use eventsource/websockets to retreive updates from server.
 
 
 
