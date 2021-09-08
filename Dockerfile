@@ -1,7 +1,6 @@
 FROM python:3.7-slim-buster
 
 ENV PYTHONUNBUFFERED 1
-ENV DEBUG True
 
 WORKDIR /code
 COPY requirements.txt /code/
