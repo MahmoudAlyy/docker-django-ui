@@ -134,9 +134,15 @@ static_files = {
 }
 
 
+DEV = (os.environ.get('DEV') == 'True')
 
-BROKER_URL = "redis://redis:6379"
-CELERY_RESULT_BACKEND = "redis://redis:6379"
+if DEV:
+    BROKER_URL = "redis://localhost:6379"
+    CELERY_RESULT_BACKEND = "redis://localhost:6379"
+    
+else:
+    BROKER_URL = "redis://redis:6379"
+    CELERY_RESULT_BACKEND = "redis://redis:6379"
 
 CELERY_TIMEZONE = 'Africa/Nairobi'
 

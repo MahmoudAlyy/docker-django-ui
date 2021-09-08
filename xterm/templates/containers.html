@@ -12,7 +12,10 @@
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
       crossorigin="anonymous"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+   {% load static %}
+   <script src="{% static 'helper.js' %}"></script>
 
 </head>
 
@@ -48,7 +51,7 @@
       <div class="mt-5 mx-5">
          <div class="d-flex d-flex justify-content-between">
             <h2>Containers</h2>
-            <button class="btn btn-md btn-secondary" onclick="updatePage()">Refresh</button>
+            <button class="btn btn-md btn-secondary" id="refresh" onclick="updatePage('../ajaxContainers/')">Refresh</button>
          </div>
          <div class="table-responsive">
             <table class="table">
@@ -74,12 +77,13 @@
    </div>
    <script>
 
-      function start_stop_remove(id, cmd) {
+      function start_stop_remove(html_btn, cmd) {
 
-         document.getElementById(id).innerHTML = "Loading...";
-         console.log(id, cmd, id)
+         html_btn.innerHTML = "Loading...";
+         containerID = html_btn.dataset.id;
+         
          let url = window.location.href + '../start_stop_remove/'
-         let data = { 'id': id, 'cmd': cmd };
+         let data = { 'id': containerID, 'cmd': cmd };
          let csrftoken = '{{csrf_token}}'
 
          fetch(url, {
@@ -96,88 +100,8 @@
             return getUpdate(data["task_id"])
 
          }).then(() => {
-            updatePage();
+            updatePage("../ajaxContainers/");
          })
-      }
-
-      function updatePage() {
-         let url = window.location.href + '../ajaxContainers/'
-         fetch(url, {
-            method: "GET",
-         }).then((response) => {
-            return response.text()
-         }).then((html) => {
-            document.getElementById('content').innerHTML = html;
-         })
-      };
-
-      function uniqueID() {
-         return Math.floor(Math.random() * Date.now())
-      }
-
-      function createToastAlert(msg, isFailure) {
-
-         let div_id = uniqueID();
-
-         const toastHtml =
-            `<div id="` + div_id + `" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
-       <div class="d-flex">
-          <div class="toast-body">`
-            + msg +
-            `</div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-             aria-label="Close"></button>
-       </div>
-    </div>
-    `;
-
-         var toastContainer = document.getElementById('toastContainer');
-         toastContainer.innerHTML += toastHtml;
-
-         // if failure msg, make background color red
-         if (isFailure) {
-            $('#' + div_id).removeClass('bg-primary').addClass('bg-danger');
-         }
-
-         $('#' + div_id).toast('show')
-         setTimeout(function () {
-            $('#' + div_id).toast('hide')
-
-         }, 5000);
-      }
-
-      function sleep(ms) {
-         return new Promise(resolve => setTimeout(resolve, ms));
-      }
-
-      async function getUpdate(task_id) {
-         var flag = true;
-         let progressUrl = window.location.href + '../get_progress/';
-
-         while (flag) {
-
-            await sleep(2000);
-            await fetch(progressUrl + task_id)
-               .then(response => response.json())
-               .then(data => {
-                  console.log(data)
-                  console.log(data['state'])
-
-                  if (data['state'] == 'SUCCESS') {
-                     flag = false;
-                     let msg = data['details']
-                     createToastAlert(msg, false)
-                  }
-
-                  else if (data['state'] == 'FAILURE') {
-                     flag = false;
-                     let msg = data['details']
-                     createToastAlert(msg, true)
-
-                  }
-               })
-         }
-         return
       }
 
    </script>

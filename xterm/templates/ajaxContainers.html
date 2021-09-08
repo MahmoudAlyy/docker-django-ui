@@ -41,8 +41,8 @@
       <div class='d-flex'>
          <button class="btn btn-info btn-sm me-3"
             onclick=" window.open(window.location.href+'../console/{{item.id}}') ">Console</button>
-         <button id={{item.id}} class="btn btn-warning btn-sm"
-            onclick="start_stop_remove(this.id,'stop')">Stop </button>
+         <button data-id={{item.id}} class="btn btn-warning btn-sm"
+            onclick="start_stop_remove(this,'stop')">Stop </button>
       </div>
    </td>
    {% else %}
@@ -54,10 +54,10 @@
    <td>
       <div class='d-flex'>
 
-         <button id={{item.id}} class="btn btn-success btn-sm me-3"
-            onclick="start_stop_remove(this.id,'start')">Start</button>
-         <button id={{item.id}} class="btn btn-danger btn-sm"
-            onclick="start_stop_remove(this.id,'remove')">Remove</button>
+         <button data-id={{item.id}} class="btn btn-success btn-sm me-3"
+            onclick="start_stop_remove(this,'start')">Start</button>
+         <button data-id={{item.id}} class="btn btn-danger btn-sm"
+            onclick="start_stop_remove(this,'remove')">Remove</button>
       </div>
    </td>
    {% endif %}
