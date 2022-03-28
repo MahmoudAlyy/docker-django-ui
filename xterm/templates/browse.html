@@ -258,7 +258,7 @@
         open_once_only = false;
       }
 
-      var socket = io.connect()
+      var socket = io.connect({transports: ["websocket", "polling"]});
 
       socket.on("connect", () => {
         term.write("Pulling image, please wait...\r\n")
